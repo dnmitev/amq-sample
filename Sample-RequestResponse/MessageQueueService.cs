@@ -34,6 +34,14 @@ namespace Sample_RequestResponse
                         context.Message.OrderId
                     }));
                 });
+
+                cfg.ReceiveEndpoint("order-count", ep =>
+                {
+                    ep.Handler<SubmitNewOrder>(context =>
+                    {
+                        throw new ArgumentException("BOOOOOOOOOOOOOM");
+                    });
+                });
             });
         }
 

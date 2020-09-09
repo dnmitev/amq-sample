@@ -32,6 +32,7 @@ namespace WebApplication2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSwaggerGen();
             services.AddMassTransit(x =>
             {
                 var serviceAddress = new Uri($"activemq://{Environment.GetEnvironmentVariable("MQ_HOSTNAME")}/{Environment.GetEnvironmentVariable("MQ_QUEUE_NAME")}");
@@ -47,6 +48,7 @@ namespace WebApplication2
                  }));
 
                 x.AddRequestClient<SubmitOrder>(serviceAddress);
+                x.AddRequestClient<SubmitNewOrder>(new Uri($"activemq://{Environment.GetEnvironmentVariable("MQ_HOSTNAME")}/order-count"));
             });
 
             services.AddMassTransitHostedService();
@@ -61,6 +63,11 @@ namespace WebApplication2
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();
