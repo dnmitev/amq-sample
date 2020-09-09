@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Sample-RequestResponse": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "MQ_USERNAME": "admin",
+        "MQ_PASSWORD": "admin",
+        "MQ_HOSTNAME": "localhost"
+      }
+    }
+  }
+}
