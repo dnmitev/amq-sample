@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SampleSaga": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Key": "Value"
+      }
+    }
+  }
+}

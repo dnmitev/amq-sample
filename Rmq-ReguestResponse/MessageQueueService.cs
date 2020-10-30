@@ -5,13 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using MassTransit;
-using MassTransit.ActiveMqTransport;
+using MassTransit.RabbitMqTransport;
 
 using MessageContracts;
 
 using Microsoft.Extensions.Hosting;
 
-namespace Sample_RequestResponse
+namespace Rmq_ReguestResponse
 {
     public class MessageQueueService : BackgroundService
     {
@@ -19,7 +19,7 @@ namespace Sample_RequestResponse
 
         public MessageQueueService()
         {
-            _bus = Bus.Factory.CreateUsingActiveMq(cfg =>
+            _bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
                 cfg.Host(Environment.GetEnvironmentVariable("MQ_HOSTNAME"), h =>
                 {
