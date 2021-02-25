@@ -26,7 +26,7 @@ namespace HealthChecks
 
             if (string.IsNullOrEmpty(token))
             {
-                return Task.FromResult(HealthCheckResult.Degraded("Token not found in MemoryCache"));
+                return Task.FromResult(HealthCheckResult.Unhealthy("Token not found in MemoryCache"));
             }
 
             return Task.FromResult(HealthCheckResult.Healthy("Token obtained from MemoryCache"));
