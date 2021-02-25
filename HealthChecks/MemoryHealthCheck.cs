@@ -13,7 +13,16 @@ namespace HealthChecks
     {
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            var token = MemoryCache.Default["failing_trusso_token"];
+            string token = string.Empty;
+
+            if (DateTime.Now.Minute % 2 == 0)
+            {
+                token = MemoryCache.Default["failing_trusso_token"]?.ToString();
+            }
+            else
+            {
+                token = MemoryCache.Default["trusso_token"]?.ToString();
+            }
 
             if (string.IsNullOrEmpty(token.ToString()))
             {
