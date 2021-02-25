@@ -15,7 +15,7 @@ namespace HealthChecks
         {
             var token = MemoryCache.Default["trusso_token"];
 
-            if (string.IsNullOrEmpty(token.ToString())
+            if (string.IsNullOrEmpty(token.ToString()))
             {
                 return Task.FromResult(HealthCheckResult.Degraded("Token not found in MemoryCache"));
             }
