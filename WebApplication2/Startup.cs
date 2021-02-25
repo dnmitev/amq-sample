@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 
 using MassTransit;
@@ -9,13 +10,17 @@ using MassTransit.ActiveMqTransport;
 using MessageContracts;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+using WebApplication2.HealthChecks;
 
 namespace WebApplication2
 {
@@ -45,6 +50,8 @@ namespace WebApplication2
                              h.Username(Environment.GetEnvironmentVariable("MQ_USERNAME"));
                              h.Password(Environment.GetEnvironmentVariable("MQ_PASSWORD"));
                          });
+
+                     cfg.UseHealthCheck(ctx);
                  }));
 
                 x.AddRequestClient<SubmitOrder>(serviceAddress);
@@ -53,6 +60,29 @@ namespace WebApplication2
 
             services.AddMassTransitHostedService();
             services.AddRazorPages();
+
+            var shouldAddFaillingHealthCheck = bool.Parse(Environment.GetEnvironmentVariable("ENABLE_FAILING_HEALTH_CHECK"));
+
+            if (shouldAddFaillingHealthCheck)
+            {
+                services.AddHealthChecks()
+                   .AddCheck<FailingMemoryCacheHealthCheck>("failing_health_check")
+                   .AddCheck<MemoryCacheHealthCheck>("custom_health_check");
+            }
+            else
+            {
+                services.AddHealthChecks()
+                   .AddCheck<MemoryCacheHealthCheck>("custom_health_check");
+            }
+           
+
+            MemoryCache.Default["access_token"] = System.Guid.NewGuid();
+
+            services.Configure<HealthCheckPublisherOptions>(options =>
+            {
+                options.Delay = TimeSpan.FromSeconds(10);
+                options.Predicate = (check) => check.Tags.Contains("ready");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,6 +107,13 @@ namespace WebApplication2
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions()
+                {
+                    Predicate = (check) => check.Tags.Contains("ready"),
+                });
+
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions());
             });
         }
     }
