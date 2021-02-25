@@ -17,14 +17,14 @@ namespace HealthChecks
 
             if (DateTime.Now.Minute % 2 == 0)
             {
-                token = MemoryCache.Default["failing_trusso_token"]?.ToString();
+                token = null;
             }
             else
             {
                 token = MemoryCache.Default["trusso_token"]?.ToString();
             }
 
-            if (string.IsNullOrEmpty(token.ToString()))
+            if (string.IsNullOrEmpty(token))
             {
                 return Task.FromResult(HealthCheckResult.Degraded("Token not found in MemoryCache"));
             }
