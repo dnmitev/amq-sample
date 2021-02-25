@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 
 namespace HealthChecks
@@ -26,8 +27,12 @@ namespace HealthChecks
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddLogging();
+            services
+                .AddHealthChecks()
+                .AddCheck<MemoryHealthCheck>("memory_health_check");
 
-            services.AddHealthChecks();
+            MemoryCache.Default["trusso_token"] = System.Guid.NewGuid().GetHashCode();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
