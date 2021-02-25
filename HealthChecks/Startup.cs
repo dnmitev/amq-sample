@@ -31,7 +31,10 @@ namespace HealthChecks
             services.AddLogging();
             services
                 .AddHealthChecks()
+                .AddCheck<HttpHealthCheck>("http_health_check")
                 .AddCheck<MemoryHealthCheck>("memory_health_check");
+
+            services.AddHttpClient();
 
             MemoryCache.Default["trusso_token"] = System.Guid.NewGuid().GetHashCode();
         }
