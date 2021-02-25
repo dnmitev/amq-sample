@@ -27,7 +27,8 @@
         "MQ_HOSTNAME": "localhost",
         "MQ_QUEUE_NAME": "order-service",
         "MQ_USERNAME": "admin",
-        "MQ_PASSWORD": "admin"
+        "MQ_PASSWORD": "admin",
+        "ENABLE_FAILING_HEALTH_CHECK": "false"
       }
     }
   }
