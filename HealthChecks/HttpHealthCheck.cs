@@ -20,10 +20,10 @@ namespace HealthChecks
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             int statusCode = 200;
-            if (DateTime.Now.Minute % 2 == 0)
-            {
-                statusCode = 401;
-            }
+            //if (DateTime.Now.Minute % 2 == 0)
+            //{
+            //    statusCode = 401;
+            //}
             var client = _httpClientFactory.CreateClient();
 
             var res = await client

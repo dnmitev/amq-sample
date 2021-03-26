@@ -1,0 +1,49 @@
+version: '3.4'
+
+services:
+  healthchecks:
+    image: ${DOCKER_REGISTRY-}healthchecks
+    build:
+      context: .
+      dockerfile: HealthChecks/Dockerfile
+    networks:
+      - local
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DB_HOST: postgres
+      DB_NAME: my-posts
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret
+
+  postgres:
+    container_name: postgres_db_container
+    image: postgres
+    environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: secret
+        PGDATA: /data/postgres
+    volumes:
+        - postgres:/data/postgres
+        - postgres_lib:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+    networks:
+        - local
+    restart: unless-stopped
+
+  adminer:
+        container_name: adminer_container
+        image: adminer:4.7.7
+        ports:
+            - 8080:8080
+        networks:
+            - local
+        restart: unless-stopped
+
+networks:
+  local:
+    driver: bridge
+
+volumes:
+    postgres:
+    postgres_lib:
