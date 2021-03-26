@@ -15,6 +15,8 @@ namespace HealthChecks.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
+        const int PAGE_SIZE = 10;
+
         private readonly PostContext _ctx;
 
 
@@ -24,9 +26,11 @@ namespace HealthChecks.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Post>> GetPosts()
+        public async Task<IEnumerable<Post>> GetPosts(int page = 1)
         {
             return await _ctx.Posts
+                .Skip((page - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
